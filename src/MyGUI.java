@@ -31,7 +31,7 @@ public class MyGUI extends JFrame {
 	private JTextField textField;
 	private TweetAnalyzer twaa;
 	private String prediction;
-	public MyGUI() {
+	public MyGUI(String model_file) {
 		TweetAnalyzer twa = new TweetAnalyzer();
 		this.prediction = null;
 		setResizable(false);
@@ -69,6 +69,7 @@ public class MyGUI extends JFrame {
 		
 		JPanel panel_1 = new JPanel();
 		springLayout.putConstraint(SpringLayout.NORTH, panel_1, 22, SpringLayout.SOUTH, textField);
+		springLayout.putConstraint(SpringLayout.EAST, panel_1, 0, SpringLayout.EAST, textField);
 		panel_1.setBackground(new Color(153, 153, 204));
 		getContentPane().add(panel_1);
 		panel_1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
@@ -84,7 +85,7 @@ public class MyGUI extends JFrame {
 				if (button_text.equals("Submit")) {
 					String text = textField.getText();
 					Tweet tweet = new Tweet(text);
-					prediction = twa.evaluateTestOnTweet("model-lemma-first-naive.model", tweet);
+					prediction = twa.evaluateTestOnTweet(model_file, tweet);
 					
 					if (prediction.equals("pos")) {
 						label.setText("This is a positive tweet");
@@ -110,9 +111,8 @@ public class MyGUI extends JFrame {
 		springLayout.putConstraint(SpringLayout.WEST, submitButton, 0, SpringLayout.WEST, textField);
 		springLayout.putConstraint(SpringLayout.SOUTH, submitButton, -9, SpringLayout.NORTH, panel);
 		springLayout.putConstraint(SpringLayout.WEST, panel_1, 0, SpringLayout.WEST, submitButton);
-		springLayout.putConstraint(SpringLayout.EAST, panel_1, 294, SpringLayout.WEST, submitButton);
 		
-		this.setSize(320, 240);
+		this.setSize(640, 240);
 		this.setVisible(true);
 		
 	}
