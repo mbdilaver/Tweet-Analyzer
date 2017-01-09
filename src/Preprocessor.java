@@ -10,51 +10,9 @@ import java.util.regex.Pattern;
 
 public class Preprocessor {
 	
-	
-	private Connection connect() {
-		// SQLite connection url
-		String url = "jdbc:sqlite:";
-		String path = "C:/EclipseWorkspace/TweetCollector/db/tweets.db";
-		url += path;
-		
-		
-		Connection conn = null;
-		try {
-			conn = DriverManager.getConnection(url);
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-		return conn;
-	}
-	
-	private ArrayList<Tweet> getAllTweets() {
-        String sql = String.format("SELECT * FROM tweets");
-        ResultSet rs;
-        ArrayList<Tweet> tweets_list = new ArrayList<Tweet>();
-        try 
-        {
-        	Connection conn = this.connect();
-        	Statement stmt  = conn.createStatement();
-            rs    = stmt.executeQuery(sql);
-            
-            while(rs.next()) 
-            {
-            	int id = rs.getInt("id");
-            	String body = rs.getString("body");
-            	int hashtag_id = rs.getInt("hashtag_id");
-            	Tweet tweet = new Tweet(id, body, hashtag_id);
-            	tweets_list.add(tweet);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        
-        return tweets_list;
-	}
-	
 	private String removeUrl(String commentstr)
     {
-        String urlPattern = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
+        String urlPattern = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$~_?\\+-=\\\\\\.&]*)";
         Pattern p = Pattern.compile(urlPattern,Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(commentstr);
         int i = 0;
@@ -105,16 +63,32 @@ public class Preprocessor {
 		return str;
 	}
 	
+	private String removeNumbers(String str) {
+		str = str.replaceAll("\\d+", " ");
+		return str;
+	}
 	
-	public String filterString(String str) {
+	private String toLowerCase(String str) {
+		str = str.toLowerCase(new Locale("tr"));
+		return str;
+	}
+	
+	private String removeSymbols(String str) {
+		str = str.replaceAll("\\p{S}", " ");
+		return str;
+	}
+	
+	private String filterString(String str) {
 		//////// Filter tweets
 		// 1 Remove URLs
 		// 2 Remove hashtag symbol '#'
 		// 3 Remove mention symbol '@' and usertag
 		// 4 Remove re-tweet indicator 'RT'
 		// 5 Remove punctuations
-		// 6 Lower letters
-		// 7 Double or more spaces to one space
+		// 6 Remove symbols
+		// 7 Lower letters
+		// 8 Remove numbers
+		// 9 Double or more spaces to one space
 		
 		//// 1 ////
 		str = removeUrl(str);
@@ -132,21 +106,28 @@ public class Preprocessor {
 		str = removePunctuations(str);
 		
 		//// 6 ////
-		str = str.toLowerCase(new Locale("tr"));
+		str = removeSymbols(str);
 		
 		//// 7 ////
+		str = toLowerCase(str);
+		
+		//// 8 ////
+		str = removeNumbers(str);
+		
+		//// 9 ////
 		str = removeExtraSpaces(str);
+		
+
 		
 		return str;
 	}
 	
-	public void filterTweets() {
+	public Tweet filterTweetBody(Tweet tweet) {
 
-		ArrayList<Tweet> tweets_list = new ArrayList<Tweet>();
-		for (Tweet tweet : tweets_list) {
-			String body = tweet.getBody();
-			body = filterString(body);
-			
-		}
+		String body = tweet.getBody();
+		body = filterString(body);
+		tweet.setBody(body);
+		return tweet;
+
 	}
 }

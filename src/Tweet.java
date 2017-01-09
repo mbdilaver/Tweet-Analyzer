@@ -1,9 +1,9 @@
 
 public class Tweet {
-	private int id;
+	private long id;
 	private String body;
 	private int hashtag_id;
-	public Tweet(int id, String body, int hashtag_id) {
+	public Tweet(long id, String body, int hashtag_id) {
 		super();
 		this.id = id;
 		this.body = body;
@@ -15,7 +15,7 @@ public class Tweet {
 	public void setBody(String body) {
 		this.body = body;
 	}
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 	public int getHashtag_id() {
