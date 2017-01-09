@@ -41,5 +41,9 @@ public class Main {
 //			ArffData arff_test = twa.createTestData("test");
 //			arff_test.saveData2File("test-6");
    
+			Tweet tw = new Tweet("kederliyim");
+			String prediction = twa.evaluateTestOnTweet("model-lemma-first-naive.model", tw);
+			
+			
 	}
 }

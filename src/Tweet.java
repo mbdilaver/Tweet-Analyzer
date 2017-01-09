@@ -9,6 +9,12 @@ public class Tweet {
 		this.body = body;
 		this.hashtag_id = hashtag_id;
 	}
+	
+	public Tweet(String body) {
+		super();
+		this.body = body;
+	}
+
 	public String getBody() {
 		return body;
 	}
